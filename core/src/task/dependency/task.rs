@@ -84,7 +84,7 @@ impl TaskHook<OnTaskEnd> for TaskDependencyTracker {
     ) {
         let should_increment = self.resolve_behavior.should_count(ctx, payload).await;
 
-        if should_increment {
+        if !should_increment {
             return;
         }
 
@@ -106,7 +106,7 @@ where
 
         let cloned_tracker = tracker.clone();
 
-        tokio::task::spawn_blocking(move || async move {
+        tokio::spawn(async move {
             config.task.attach_hook::<OnTaskEnd>(cloned_tracker).await;
         });
 
