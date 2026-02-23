@@ -116,7 +116,7 @@ impl<P: CollectionExecPolicy<CollectionTaskError> + Send + Sync + 'static> Colle
     ) -> Result<(), <CollectionTaskFrame<Self> as TaskFrame>::Error> {
         for idx in 0..handle.length() {
             let result = handle
-                .execute(idx, None)
+                .execute(idx)
                 .await
                 .err()
                 .map(|err| CollectionTaskError::new(idx, err));
@@ -174,7 +174,9 @@ impl<P: CollectionExecPolicy<CollectionTaskError> + Send + Sync + 'static> Colle
                     frame: frame.as_ref(),
                 });
 
-                child_ctx.emit::<OnChildTaskFrameStart>(&None).await;
+                child_ctx
+                    .emit::<OnChildTaskFrameStart>(&(idx, frame.as_ref()))
+                    .await;
                 let result = child_ctx.erased_subdivide(frame.as_ref()).await;
                 match result {
                     Ok(()) => child_ctx.emit::<OnChildTaskFrameEnd>(&None).await,
@@ -239,7 +241,7 @@ impl<S: SelectFrameAccessor> CollectionExecStrategy for SelectionExecStrategy<S>
         handle: CollectionTaskFrameHandle<'_, Self>,
     ) -> Result<(), <CollectionTaskFrame<Self> as TaskFrame>::Error> {
         let idx = self.accessor.select(handle.deref()).await;
-        let Some(frame) = handle.get(idx) else {
+        if handle.get(idx).is_none() {
             return Err(CollectionTaskError::new(
                 idx,
                 Box::new(StandardCoreErrorsCG::TaskIndexOutOfBounds(
@@ -251,16 +253,13 @@ impl<S: SelectFrameAccessor> CollectionExecStrategy for SelectionExecStrategy<S>
         };
 
         handle
-            .execute(idx, Some((idx, frame)))
+            .execute(idx)
             .await
             .map_err(|err| CollectionTaskError::new(idx, err))
     }
 }
 
-define_event!(
-    OnChildTaskFrameStart,
-    Option<(usize, &'a dyn ErasedTaskFrame)>
-);
+define_event!(OnChildTaskFrameStart, (usize, &'a dyn ErasedTaskFrame));
 define_event!(OnChildTaskFrameEnd, Option<&'a dyn TaskError>);
 
 define_event_group!(
@@ -326,11 +325,7 @@ pub struct CollectionTaskFrameHandle<'a, T: CollectionExecStrategy> {
 }
 
 impl<'a, T: CollectionExecStrategy> CollectionTaskFrameHandle<'a, T> {
-    pub async fn execute(
-        &self,
-        idx: usize,
-        selection_payload: Option<(usize, &dyn ErasedTaskFrame)>,
-    ) -> Result<(), Box<dyn TaskError>> {
+    pub async fn execute(&self, idx: usize) -> Result<(), Box<dyn TaskError>> {
         let Some(taskframe) = self.collection.taskframes.get(idx).map(Arc::as_ref) else {
             return Err(Box::new(StandardCoreErrorsCG::TaskIndexOutOfBounds(
                 idx,
@@ -340,7 +335,7 @@ impl<'a, T: CollectionExecStrategy> CollectionTaskFrameHandle<'a, T> {
         };
 
         self.ctx
-            .emit::<OnChildTaskFrameStart>(&selection_payload)
+            .emit::<OnChildTaskFrameStart>(&(idx, taskframe))
             .await;
         let result = self.ctx.erased_subdivide(taskframe).await;
         match result {
