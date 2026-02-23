@@ -156,6 +156,7 @@ about the module, its goals... etc. For headers:
 - ``# Exports`` Lists the relevant items the module exports **(REQUIRED)**
 
 **Struct Sections**
+For errors, in the semantics header, one should describe how it behaves, when it occurs and what information does it contain.
 - ``# Method(s)`` Lists and briefly describes the methods (only functions, no getters/setters). **(REQUIRED)**
 - ``# Semantics`` Lists how the struct is meant to be used and what it does. **(REQUIRED)**
 - ``# Constructor(s)`` Lists the various constructors you can use (including builders, normal rust initialization and via the Default trait). **(REQUIRED)**
@@ -164,6 +165,7 @@ about the module, its goals... etc. For headers:
 - ``# Generic(s)`` Describes the generics which the struct may have (don't include it if there aren't any). **(RECOMMENDED)**
 
 **Enum Sections**
+For errors, in the semantics header, one should describe how each variant behaves, when it occurs and what information does each variant contain.
 - ``# Variant(s)`` Lists and briefly describes the variants of this enum. **(REQUIRED)**
 - ``# Method(s)`` Lists and briefly describes the methods (only functions, no getters/setters). **(REQUIRED)**
 - ``# Semantics`` Lists how the enum is meant, what each variant is best suited to and what it does. **(REQUIRED)**
