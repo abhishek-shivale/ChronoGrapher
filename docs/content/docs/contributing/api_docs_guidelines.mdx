@@ -76,14 +76,22 @@ This has to do with ChronoGrapher-specific components and systems. These include
 - ``# Events`` Describes the events which the ``TaskFrame`` fires, when they are fired and what payload they have. **(REQUIRED)**
 - ``# Decorating / Wrapping Behaivior`` Documents how ``TaskFrames`` behave when wrapping inner ``TaskFrame(s)``. **(REQUIRED)**
 - ``# Execution Error(s)`` Document what kind of errors may appear whilst the TaskFrame is executing, under what conditions. **(REQUIRED)**
-- ``# Supported TaskHook(s)`` Describes what kind of TaskHooks are supported which change the behavior of the TaskFrame in some way. **(RECOMMENDED)**
+- ``# Supported TaskHook(s)`` Describes what kind of TaskHooks are supported which change the behavior of the TaskFrame in some way, if any. **(RECOMMENDED)**
+
+**CollectionExecStrategy Sections**
+- ``# Strategy Semantics`` Describes how the ``CollectionExecStrategy`` behaves in the collection. **(REQUIRED)**
+- ``# Supported TaskHook(s)`` Describes what kind of TaskHooks are supported which change the behavior of the ``CollectionExecStrategies`` in some way, if any. **(RECOMMENDED)**
+
+**CollectionExecPolicy Sections**
+- ``# Policy Semantics`` Describes how the ``CollectionExecPolicy`` behaves with the strategy. **(REQUIRED)**
+- ``# Supported CollectionExecStrategies`` Describes what ``CollectionExecStrategies`` are supported by this policy. **(REQUIRED)**
 
 **TaskHook Sections**
 - ``# TaskHook Type`` Describes the type of the ``TaskHook``, a marker? An observer? An error handler? A state manager? **(REQUIRED)**
 - ``# How To Attach`` Documents how to attach this TaskHook to tasks, does it need manual ``attach_hook`` or are there methods
   that do it automatically? **(RECOMMENDED)**
 - ``# Supported Event(s) / THEG(s)`` Describes the events and THEGs which the ``TaskHook`` supports. **(REQUIRED)**
-- ``# Supported TaskHook(s)`` Describes what kind of TaskHooks are supported which change the behavior of this TaskHook in some way. **(RECOMMENDED)**
+- ``# Supported TaskHook(s)`` Describes what kind of TaskHooks are supported which change the behavior of this TaskHook in some way, if any. **(RECOMMENDED)**
 
 **TaskHook Event Sections (NOT THEGs)**
 - ``# Payload Type`` Lists the payload type, what it represents, what information it has...etc. **(REQUIRED)**
@@ -110,7 +118,7 @@ This has to do with ChronoGrapher-specific components and systems. These include
 **SchedulerEngine Sections**
 - ``# Engine Semantics`` Describes how the SchedulerEngine works, how it talks to other components and so on. **(REQUIRED)**
 - ``# Supported Config Shape`` Lists the various configuration shapes which the SchedulerEngine supports. **(REQUIRED)**
-- ``# Supported TaskHook(s)`` Describes what kind of TaskHooks are supported which change the behavior of the SchedulerEngine in some way. **(RECOMMENDED)**
+- ``# Supported TaskHook(s)`` Describes what kind of TaskHooks are supported which change the behavior of the SchedulerEngine in some way, if any. **(RECOMMENDED)**
 
 **SchedulerClock Sections**
 - ``# Timing Semantics`` Describes how the SchedulerClock works, what time it represents, how it idles and so on. **(REQUIRED)**
@@ -120,13 +128,13 @@ This has to do with ChronoGrapher-specific components and systems. These include
 **SchedulerTaskDispatcher Sections**
 - ``# Dispatching Semantics`` Describes how the SchedulerTaskDispatcher works, how does it exactly dispatch tasks and so on. **(REQUIRED)**
 - ``# Supported Config Shape`` Lists the various configuration shapes which the SchedulerTaskDispatcher supports. **(REQUIRED)**
-- ``# Supported TaskHook(s)`` Describes what kind of TaskHooks are supported which change the behavior of the SchedulerTaskDispatcher in some way. **(RECOMMENDED)**
+- ``# Supported TaskHook(s)`` Describes what kind of TaskHooks are supported which change the behavior of the SchedulerTaskDispatcher in some way, if any. **(RECOMMENDED)**
 
 **SchedulerTaskStore Section**
 - ``# Store Semantics`` Explains how the SchedulerTaskStore works, how does it sort earliest and so on. **(REQUIRED)**
 - ``# Supported Config Shape`` Lists the various configuration shapes which the SchedulerTaskStore supports. **(REQUIRED)**
 - ``# Supported PersistenceBackends`` Describes if the SchedulerTaskStore is persistent and what kind of backends it supports. **(REQUIRED)**
-- ``# Supported TaskHook(s)`` Describes what kind of TaskHooks are supported which change the behavior of the SchedulerTaskStore in some way. **(RECOMMENDED)**
+- ``# Supported TaskHook(s)`` Describes what kind of TaskHooks are supported which change the behavior of the SchedulerTaskStore in some way, if any. **(RECOMMENDED)**
 
 **SchedulerConfig Sections**
 - ``# Component Compatibility`` Which composites work together and if there are any restrictions. **(REQUIRED)**
@@ -140,6 +148,13 @@ This has to do with ChronoGrapher-specific components and systems. These include
 <RenderProgrammingLanguageBased target_name={"Rust"}>
 ## Rust-Specific Headers
 This has to do with Rust's general things and patterns, such as consts, traits, builders, structs, enums... etc. Section include:
+<br />
+**Module Sections** <br />
+Should be noted, this one is special, the summary on top doesn't act as a summary but as a full description of everything
+about the module, its goals... etc. For headers:
+
+- ``# Exports`` Lists the relevant items the module exports **(REQUIRED)**
+
 **Struct Sections**
 - ``# Method(s)`` Lists and briefly describes the methods (only functions, no getters/setters). **(REQUIRED)**
 - ``# Semantics`` Lists how the struct is meant to be used and what it does. **(REQUIRED)**
@@ -183,16 +198,20 @@ This has to do with Rust's general things and patterns, such as consts, traits, 
 - ``# Error(s)`` Lists the various errors which may appear, under what conditions each error appears in. **(REQUIRED)**
 - ``# Panics`` Lists the various reasons the method may panic, under what circumstances and why. **(REQUIRED)**
 - ``# Semantics`` Lists how the method is meant to be used and what it does. **(REQUIRED)**
+
+**GLOBAL Sections**
+- ``# Feature Gated?`` Lists if the item is feature-gated, why and which feature has to be enabled **(RECOMMENDED)**
+
 </RenderProgrammingLanguageBased>
 
 ## Miscellaneous Headers
 This has to do with any miscellaneous sections, they are universal and  apply to both ChronoGrapher-specific
 component and general Rust stuff. Sections include:
 - ``# Example(s)`` Lists various examples on how to use this system in practice. **(REQUIRED)**
+- ``# FAQ & Troubleshooting`` Common issues when using this thing as well as answering frequently asked questions **(RECOMMENDED)**
 - ``# See Also`` Lists any relevant ``struct``, ``enum``, ``trait``, ``methods``, ``type-alias``, ``constants``, in addition
   to explaining how they relate briefly. That are either mentioned on the documentation or are recommended to be seen,
   for using this on methods, list as well the parent ``struct``, ``enum`` or ``trait``. **(REQUIRED)**
-- ``# FAQ & Troubleshooting`` Common issues when using this thing as well as answering frequently asked questions **(RECOMMENDED)**
 
 ## Making A Good Example
 When listing any example(s) in the ``Example(s)`` header, you should always have runnable code written as the example,
@@ -274,6 +293,10 @@ Look above on the "Making A Good Example" section
 # FAQ & Troubleshooting
 Look above on the "Making A Good FAQ & Troubleshooting"
 
+# Feature Gated?
+Describes if the item is gated by a feature that must be toggled on, why it is locked and what feature(s) are responsible
+for unlocking the item in question. Should be no more than 3-5 lines.
+
 # See Also
 Lists relevant / similar components, which includes both language-specific features used in the making of this component
 (for example, in Python, the classes it inherits, in Rust the traits it implements). While briefly describing what
@@ -291,5 +314,8 @@ introducing new headers in already-established systems, they can introduce new o
 - Contributors are creating an entirely new system, OR
 - Contributors can't describe something specific with the current headers (and it is something recurrent).
 
-However, it is best to discuss this with the maintainer of the project (McBrincie212) beforehand, to reach a conclusion,
-introducing new headers could mean updating this spec and previous other API docs.
+You can add niche-specific headers for structure and separation, though if they extend to more components than it, they
+count as "global" headers.
+
+For introducing any "global" header, it is best to discuss this with the maintainer of the project (McBrincie212) beforehand,
+to reach a conclusion, introducing new headers could mean updating this spec and previous other API docs.
