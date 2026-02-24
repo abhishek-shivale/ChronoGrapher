@@ -42,6 +42,6 @@ impl ResolvableFrameDependency for FlagDependency {
 #[async_trait]
 impl UnresolvableFrameDependency for FlagDependency {
     async fn unresolve(&self) {
-        self.0.store(true, Ordering::Relaxed);
+        self.0.store(false, Ordering::Relaxed);
     }
 }

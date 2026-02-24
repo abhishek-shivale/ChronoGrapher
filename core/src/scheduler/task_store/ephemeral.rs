@@ -23,7 +23,7 @@ impl<C: SchedulerConfig> PartialEq<Self> for InternalScheduledItem<C> {
 
 impl<C: SchedulerConfig> PartialOrd<Self> for InternalScheduledItem<C> {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        other.0.partial_cmp(&self.0)
+        Some(self.cmp(other))
     }
 }
 
@@ -39,7 +39,7 @@ pub struct EphemeralSchedulerTaskStore<C: SchedulerConfig> {
     earliest_sorted: Arc<Mutex<BinaryHeap<InternalScheduledItem<C>>>>,
     tasks: DashMap<C::TaskIdentifier, Arc<ErasedTask<C::TaskError>>>,
     sender: tokio::sync::mpsc::Sender<SchedulePayload>,
-    notifier: tokio::sync::Notify
+    notifier: tokio::sync::Notify,
 }
 
 impl<C: SchedulerConfig> Default for EphemeralSchedulerTaskStore<C> {
@@ -56,7 +56,7 @@ impl<C: SchedulerConfig> Default for EphemeralSchedulerTaskStore<C> {
                     Ok(time) => {
                         let mut lock = earliest_sorted_clone.lock().await;
                         lock.push(InternalScheduledItem(time, id.clone()))
-                    },
+                    }
                     Err(err) => {
                         eprintln!(
                             "TaskTrigger corresponding to the id {:?} failed to compute a future time with the error {:?}",

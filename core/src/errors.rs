@@ -57,24 +57,25 @@ pub enum DependencyTaskFrameError<T: TaskError> {
 pub struct CronError {
     pub field_pos: usize,
     pub position: usize,
-    pub error_type: CronErrorTypes
+    pub error_type: CronErrorTypes,
 }
 
 impl Display for CronError {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         let field_type = match self.field_pos {
-            0 => {"Seconds"}
-            1 => {"Minutes"}
-            2 => {"Hours"}
-            3 => {"Day Of Month"}
-            4 => {"Month"}
-            5 => {"Day Of Week"}
-            _ => {"UNKNOWN"}
+            0 => "Seconds",
+            1 => "Minutes",
+            2 => "Hours",
+            3 => "Day Of Month",
+            4 => "Month",
+            5 => "Day Of Week",
+            _ => "UNKNOWN",
         };
-        
-        f.write_fmt(
-            format_args!("{}\n\tAt `{field_type}` field and position {}", self.error_type, self.position)
-        )
+
+        f.write_fmt(format_args!(
+            "{}\n\tAt `{field_type}` field and position {}",
+            self.error_type, self.position
+        ))
     }
 }
 
@@ -82,7 +83,7 @@ impl Display for CronError {
 pub enum CronErrorTypes {
     #[error("ParserError: {0}")]
     Parser(CronExpressionParserErrors),
-    
+
     #[error("LexerError: {0}")]
     Lexer(CronExpressionLexerErrors),
 }
@@ -135,17 +136,10 @@ pub enum CronExpressionLexerErrors {
     NonNumericOperatorUse,
 
     #[error("Undefined range, minimum bound is higher than maximum bound ({start} >= {end})")]
-    InvalidRangeBounds {
-        start: u8,
-        end: u8
-    },
+    InvalidRangeBounds { start: u8, end: u8 },
 
     #[error("Number `{num}` exceeds expected range (of {start} - {end})")]
-    InvalidNumericRange {
-        num: u8,
-        start: u8,
-        end: u8
-    },
+    InvalidNumericRange { num: u8, start: u8, end: u8 },
 
     #[error("Empty field")]
     EmptyField,

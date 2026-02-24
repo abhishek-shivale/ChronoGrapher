@@ -11,7 +11,9 @@ pub struct TaskScheduleInterval(pub(crate) Duration);
 
 impl TaskScheduleInterval {
     #[cfg(feature = "chrono")]
-    pub fn timedelta(interval: chrono::TimeDelta) -> Result<Self, crate::errors::StandardCoreErrorsCG> {
+    pub fn timedelta(
+        interval: chrono::TimeDelta,
+    ) -> Result<Self, crate::errors::StandardCoreErrorsCG> {
         Ok(Self(interval.to_std().map_err(|_| {
             crate::errors::StandardCoreErrorsCG::IntervalTimedeltaOutOfRange
         })?))
