@@ -2,4 +2,3 @@ mod dynamic_dependency_test;
 mod flag_resolution_test;
 mod logical_combinations_test;
 mod task_dependency_test;
-mod task_dependency_test_failures_only;
