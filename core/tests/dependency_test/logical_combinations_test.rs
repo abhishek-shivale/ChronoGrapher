@@ -27,6 +27,12 @@ async fn test_and_dependency() {
         and_dep.is_resolved().await,
         "AND dependency should be resolved when both inputs are resolved"
     );
+
+    f2.store(false, Ordering::Relaxed);
+    assert!(
+        !and_dep.is_resolved().await,
+        "AND dependency should remain unresolved when only one input is resolved"
+    );
 }
 
 #[tokio::test]
