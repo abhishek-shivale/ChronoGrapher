@@ -37,14 +37,23 @@ macro_rules! define_event {
     };
 }
 
-/// [`TaskIdentifier`] trait use for defining unique indentifier for example UUID, integers, strings, and generally any kind of identifier format the user can use which suits their needs.
-/// The identifier is used internally in "[`Scheduler`] Land" to hold references to tasks with a simple representation.
+/// [`TaskIdentifier`] trait used for defining unique identifiers. For example UUID, integers, strings,
+/// and generally any kind of identifier format the user can use which suits their needs.
 ///
-/// Specifically its used in the [`SchedulerTaskStore`] internally. Identifiers can be configured via the [`SchedulerConfig`] trait, different [`Schedulers`] may have different [`TaskIdentifiers`]
+/// The identifier is used internally in "[`Scheduler`] Land", via a hashmap, it associates an identifier
+/// with an owned [Task](crate::task::Task) instance. This identifier is unique, cloneable and comparable.
+///
+/// Specifically it is used in the [`SchedulerTaskStore`](crate::scheduler::task_store::SchedulerTaskStore) internally.
+/// Identifiers can be configured via the [`SchedulerConfig`](crate::scheduler::SchedulerConfig) trait.
+/// Different [`Schedulers`](crate::scheduler::Scheduler) may have different [`TaskIdentifiers`](TaskIdentifier)
 /// defined via their configuration.
 ///
+/// > **Note:** It should be mentioned, identifiers are held internally in some cases in the "Task Land",
+/// but never exposed directly (as to prevent leaking abstractions)
+///
 /// # Semantics
-/// Implementors must provide a way to generate unique indentifier for task via the [`generate`](TaskIdentifier::generate) method as listed in the trait itself.
+/// Implementors must provide a way to generate unique identifier for task via the
+/// [`generate`](TaskIdentifier::generate) method as listed in the trait itself.
 ///
 /// # Required Subtrait(s)
 /// [`TaskIdentifier`] requires the following subtraits in order to be implemented:
@@ -57,14 +66,15 @@ macro_rules! define_event {
 /// [`TaskIdentifier`] also requires `Send` + `Sync` + `'static`.
 ///
 /// # Required Method(s)
-/// The [`TaskIdentifier`] trait requires developers to implement the [`generate`](TaskIdentifier::generate) method, which produces a new unique identifier
-/// per call.
+/// The [`TaskIdentifier`] trait requires developers to implement the [`generate`](TaskIdentifier::generate)
+/// method, which produces a new unique identifier per call.
 ///
 /// # Implementation(s)
-/// The main implementor inside the core is [`Uuid`] which generates a random UUID v4 via using [`Uuid::new_v4`].
+/// The main implementor inside the core is [`Uuid`] which generates a random UUID v4 via using
+/// internally [`Uuid::new_v4`].
 ///
 /// # Object Safety / Dynamic Dispatching
-/// This trait is **not** object-safe due to the `Clone` and more specifically the `Sized` supertrait requirement.
+/// This trait is **NOT** object-safe due to the `Clone` and more specifically the `Sized` supertrait requirement.
 ///
 /// # Example(s)
 /// ```
@@ -87,7 +97,7 @@ macro_rules! define_event {
 ///
 /// fn calculate_hash<T: Hash>(t: &T) -> u64 {
 ///     let mut s = DefaultHasher::new();
-////    t.hash(&mut s);
+///     t.hash(&mut s);
 ///     s.finish()
 /// }
 ///
@@ -96,11 +106,10 @@ macro_rules! define_event {
 /// ```
 /// # See Also
 /// - [`Uuid`] - The default implementation, generating random v4 UUIDs.
-/// - [`SchedulerConfig`] - One of configuration parameters over lots of others.
-/// - [`Scheduler`] - The interface around the store using the identifier.
-/// - [`SchedulerTaskStore`] - Manages linking identifiers to tasks.
-/// - [`Task`](crate::task::Task) - The primary consumer of task identifiers.
-
+/// - [SchedulerConfig](crate::scheduler::SchedulerConfig) - One of configuration parameters over lots of others.
+/// - [Scheduler](crate::scheduler::Scheduler) - The interface around the store using the identifier.
+/// - [SchedulerTaskStore](crate::scheduler::task_store::SchedulerTaskStore) - Manages linking identifiers to tasks.
+/// - [`Task`](crate::task::Task) - The object which the task identifier associates.
 pub trait TaskIdentifier:
     'static + Debug + Clone + Eq + PartialEq<Self> + Hash + Send + Sync
 {
