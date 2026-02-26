@@ -111,7 +111,7 @@ impl<C: SchedulerConfig> SchedulerEngine<C> for DefaultSchedulerEngine {
 
         let clock = clock.clone();
         let store = store.clone();
-        let _dispatcher = dispatcher.clone();
+        let dispatcher = dispatcher.clone();
 
         tokio::spawn(async move {
             while let Some((id, instruction)) = instruct_receive.recv().await {
@@ -136,7 +136,9 @@ impl<C: SchedulerConfig> SchedulerEngine<C> for DefaultSchedulerEngine {
                         }
                     }
 
-                    SchedulerHandleInstructions::Halt => {}
+                    SchedulerHandleInstructions::Halt => {
+                        dispatcher.cancel(id).await;
+                    }
 
                     SchedulerHandleInstructions::Block => {
                         store.remove(id).await;
