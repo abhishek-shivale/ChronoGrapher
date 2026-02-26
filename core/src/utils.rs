@@ -37,32 +37,36 @@ macro_rules! define_event {
     };
 }
 
-/// TaskIdentifier trait use for defining unique indentifier for example [Uuid], integers, strings, and generally any kind of identifier format the user can use which suits their needs.
+/// [`TaskIdentifier`] trait use for defining unique indentifier for example UUID, integers, strings, and generally any kind of identifier format the user can use which suits their needs.
+/// The identifier is used internally in "[`Scheduler`] Land" to hold references to tasks with a simple representation.
+///
+/// Specifically its used in the [`SchedulerTaskStore`] internally. Identifiers can be configured via the [`SchedulerConfig`] trait, different [`Schedulers`] may have different [`TaskIdentifiers`]
+/// defined via their configuration.
 ///
 /// # Semantics
-/// Implementors must provide a way to generate unique indentifier for task.
+/// Implementors must provide a way to generate unique indentifier for task via the [`generate`](TaskIdentifier::generate) method as listed in the trait itself.
 ///
 /// # Required Subtrait(s)
-/// TaskIdentifier requires the following subtraits in order to be implemented:
-/// - `Debug` - For displaying the ID.
-/// - `Clone` - For fully cloning the ID.
-/// - `PartialEq` - For comparing 2 IDs and checking if they are equal.
-/// - `Eq` - For ensuring the comparison applies in both directions.
-/// - `Hash` - For producing a hash from the ID.
+/// [`TaskIdentifier`] requires the following subtraits in order to be implemented:
+/// - ``Debug`` - For displaying the ID.
+/// - ``Clone`` - For fully cloning the ID.
+/// - ``PartialEq`` - For comparing 2 IDs and checking if they are equal.
+/// - ``Eq`` - For ensuring the comparison applies in both directions.
+/// - ``Hash`` - For producing a hash from the ID.
 ///
-/// TaskIdentifier also requires `Send` + `Sync` + `'static`.
+/// [`TaskIdentifier`] also requires `Send` + `Sync` + `'static`.
 ///
 /// # Required Method(s)
-/// - [`generate`](TaskIdentifier::generate) - Produces a new unique identifier.
+/// The [`TaskIdentifier`] trait requires developers to implement the [`generate`](TaskIdentifier::generate) method, which produces a new unique identifier
+/// per call.
 ///
 /// # Implementation(s)
-/// - [`Uuid`] - Generates a random UUID v4 via [`Uuid::new_v4`].
+/// The main implementor inside the core is [`Uuid`] which generates a random UUID v4 via using [`Uuid::new_v4`].
 ///
 /// # Object Safety / Dynamic Dispatching
-/// This trait is **not** object-safe due to the `Clone` and `Sized` requirement from its supertraits.
+/// This trait is **not** object-safe due to the `Clone` and more specifically the `Sized` supertrait requirement.
 ///
 /// # Example(s)
-///
 /// ```
 /// use uuid::Uuid;
 /// use chronographer::utils::TaskIdentifier;
@@ -75,13 +79,26 @@ macro_rules! define_event {
 ///     }
 /// }
 /// 
-/// let task_id = TaskId::generate();
-/// let id: Uuid = Uuid::generate();
+/// let task_id1 = TaskId::generate();
+/// let task_id2 = TaskId::generate();
 /// 
-/// assert_ne!(id, task_id.0);
+/// // Unequal, as they are unique entries
+/// assert_ne!(task_id1, task_id2);
+///
+/// fn calculate_hash<T: Hash>(t: &T) -> u64 {
+///     let mut s = DefaultHasher::new();
+////    t.hash(&mut s);
+///     s.finish()
+/// }
+///
+/// // They produce different hashes (since they are unique)
+/// assert_ne!(calculate_hash(&task_id1), calculate_hash(&task_id2));
 /// ```
 /// # See Also
 /// - [`Uuid`] - The default implementation, generating random v4 UUIDs.
+/// - [`SchedulerConfig`] - One of configuration parameters over lots of others.
+/// - [`Scheduler`] - The interface around the store using the identifier.
+/// - [`SchedulerTaskStore`] - Manages linking identifiers to tasks.
 /// - [`Task`](crate::task::Task) - The primary consumer of task identifiers.
 
 pub trait TaskIdentifier:
