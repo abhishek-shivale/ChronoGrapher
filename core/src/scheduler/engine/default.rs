@@ -8,23 +8,20 @@ use dashmap::DashSet;
 use std::any::type_name;
 use std::sync::Arc;
 use tokio::join;
-use tokio::sync::Mutex;
 
 type EngineSender<C> = tokio::sync::mpsc::Sender<(
-    <C as SchedulerConfig>::TaskIdentifier, 
+    <C as SchedulerConfig>::TaskIdentifier,
     Option<<C as SchedulerConfig>::TaskError>
 )>;
 
 pub struct DefaultSchedulerEngine<C: SchedulerConfig> {
     channel: Arc<Option<EngineSender<C>>>,
-    spawn_collection: Arc<Mutex<Vec<C::TaskIdentifier>>>,
 }
 
 impl<C: SchedulerConfig> Default for DefaultSchedulerEngine<C> {
     fn default() -> Self {
         Self {
             channel: Arc::new(None),
-            spawn_collection: Arc::new(Mutex::new(Vec::new())),
         }
     }
 }
@@ -67,14 +64,6 @@ impl<C: SchedulerConfig> SchedulerEngine<C> for DefaultSchedulerEngine<C> {
         let blocked_ids: DashSet<C::TaskIdentifier> = DashSet::default();
 
         join!(
-            async {
-                for id in self.spawn_collection.lock().await.iter() {
-                    if let Some(task) = store.get(&id) {
-                        spawn_task::<C>(id.clone(), scheduler_send.clone(), &dispatcher, task);
-                    }
-                }  
-            },
-            
             // ============================
             // Reschedule Logic
             // ============================
@@ -146,7 +135,6 @@ impl<C: SchedulerConfig> SchedulerEngine<C> for DefaultSchedulerEngine<C> {
         let store = store.clone();
         let dispatcher = dispatcher.clone();
         let engine_sender_channel = self.channel.clone();
-        let spawn_collection = self.spawn_collection.clone();
 
         tokio::spawn(async move {
             while let Some((id, instruction)) = instruct_receive.recv().await {
@@ -186,7 +174,6 @@ impl<C: SchedulerConfig> SchedulerEngine<C> for DefaultSchedulerEngine<C> {
                             });
                             continue;
                         }
-                        spawn_collection.lock().await.push(id.clone());
                     }
                 }
             }
