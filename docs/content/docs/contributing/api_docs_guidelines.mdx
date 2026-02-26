@@ -222,7 +222,7 @@ Declarative and function-like macros (like `dynamic_taskframe!`) are invoked wit
 ### Derive Macro Sections
 Derive macros (like `#[derive(Default)]` if you add them) automatically implement traits for structs/enums.
 - ``# Expansion Semantics`` Describes what the macro generates as code (do not provide the entire code, explain only what its supposed to expand to). **(REQUIRED)**
-- ``# Implemented Trait(s)`` Lists which traits the macro implements for its target. **(REQUIRED)**
+- ``# Implemented Trait(s)`` Lists which traits the macro implements for its target, if any. **(REQUIRED)**
 - ``# Requirements`` Describes what the target struct/enum must provide (field names, types, etc...). For the macro to work. **(REQUIRED)**
 - ``# Customization Attributes`` Lists any helper attributes that modify the derived behavior (e.g., `#[my_attribute(name = "...")]`). **(RECOMMENDED)**
 - ``# Limitations`` Documents any known limitations, edge cases, or situations where the macro behaves unexpectedly. **(RECOMMENDED)**
