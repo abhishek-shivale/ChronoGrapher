@@ -47,7 +47,7 @@ impl<E: TaskError> SchedulerConfig for DefaultSchedulerConfig<E> {
     type TaskError = E;
     type SchedulerClock = ProgressiveClock;
     type SchedulerTaskStore = EphemeralSchedulerTaskStore<Self>;
-    type SchedulerTaskDispatcher = DefaultTaskDispatcher;
+    type SchedulerTaskDispatcher = DefaultTaskDispatcher<Self>;
     type SchedulerEngine = DefaultSchedulerEngine;
 }
 
