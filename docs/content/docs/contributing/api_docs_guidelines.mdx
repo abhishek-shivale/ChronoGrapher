@@ -279,7 +279,10 @@ An example of a good API docs first example is the following:
 This is a beginner example, as such, it only uses 3 workflow primitives and nothing complex, more advanced examples
 as said should skip the explanation.
 
-For our case the explanation of the ``builder`` methods, ``with_*`` methods and how ``build`` returns the workflow
+For our case the explanation of the ``builder`` methods, ``with_*`` methods and how ``build`` returns the workflow.
+
+There are also **Contrast Examples** which showcase failure (compile-time or panic), they are less common but definitely
+valuable in cases where you want to show how failure is introduced when doing something specific.
 
 # Making A Good "FAQ & Troubleshooting"
 This section should describe any common questions developers may have around this feature. It's best to take on the
@@ -335,6 +338,41 @@ The ordering of the sections and headers listed above follow the exact same orde
 API documentation. For example the ``TaskFrame`` section is above compared to the ``TaskHook`` section.
 
 Similarly, the header ``# Events`` is above of ``# Execution Error(s)`` in the TaskFrame section.
+
+# Making A Good (Top) Summary
+The summary explains the topic briefly, its goal is for developers to quickly read it and understand the basics of this
+component / feature and how it fits in the rest of the system. It should include:
+- What the component / feature is about and what is it supposed to represent.
+- Which other systems use this feature / component and where its used.
+- Any notes regarding its usage via ``> **Note:**`` or just ``**Note:**``
+
+Contributors should answer these questions with needed clarity.
+
+# Tips About Technical Writing & Examples
+1. Avoid verbosity, explain things in simple language with known vocabulary and cleanly.
+2. Avoid using a bullet / numbered list when you have 1-2 components, instead make it a sentence.
+3. Almost always explain in a bullet / numbered list the entry (the description is separated either via ``:`` or `` - ``),
+  Only avoid explaining when you're just listing items or have already explained them.
+4. Do not use ``Code Fences`` for referring to components, instead link to them.
+5. Paragraphs should be around 2 lines and at worst, no more than ~3 lines.
+6. When writing an example, explain it below what is supposed to do (use helpful comments as well).
+7. Examples especially on the top should be simple and common to encounter, the further down the more complex and little
+  more niche. Still however, it shouldn't be too niche, only list relevant and common-*ish* examples.
+8. Use "contrast" examples where it makes sense (for simple components, avoid the use), as they are meant to showcase reasonable failure
+   when something is done.
+9. Use ``assert!`` or ``assert_ne!`` for comparisons and for listing what is the expected value in the example.
+10. Avoid most of the time the use of ``ignore`` and make your examples doc-testable, use only when examples are theoretical.
+11. Hide code via ``# <...>`` for doc-tests, only show code which is relevant.
+12. Use ``should_panic`` for when you expect the code to panic (hinting it better to the user).
+13. Use ``no_run`` to ensure the code compiles but not run.
+14. Use ``compile_fail`` to show a contrast example where failure is expected.
+15. Favor consistency with the other documentation as opposed to writing in isolation.
+
+Currently, the best API docs examples is the ``TaskIdentifier`` trait, it has just enough description about it to be
+informative and concise while acknowledging ``TaskIdentifier`` isn't complex and non-deserving of a full manifesto.
+
+Another good API docs example is ``CollectionExecStrategy``, while it is a bit more complex it addresses where it resides in,
+what it is supposed to do and so on, provides more examples than ``TaskIdentifier`` due to its complexity surface.
 
 # Introducing New API Docs Headers
 There may be times, where specific API headers don't fit in explaining your system. While contributors should typically avoid
