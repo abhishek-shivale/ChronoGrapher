@@ -6,6 +6,16 @@ description: "Strict, rigorous guidelines and practices for API documentation"
 This page mentions how to write effective API documentation for the ChronoGrapher project,
 this domain knowledge applies to the core, every SDK, every extension / integration... etc.
 
+When referring to API docs, it has to do with ``docstrings``. For example in <ProgrammingLanguage />:
+<RenderProgrammingLanguageBased target_name={"Rust"}>
+```rust title="my_file.rs" lineNumbers
+/// This is what docstrings are in Rust, right now we are documenting a function
+fn abc(a: &str, b: i32, c: Vec<u8>) -> bool {
+    // ...
+}
+```
+</RenderProgrammingLanguageBased>
+
 API documentation should be the final part, once the feature stabilizes, documenting too early will lead
 to technical debt. As such ensure you will rarely make significant changes later down the line.
 
