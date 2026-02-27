@@ -10,7 +10,7 @@ When referring to API docs, it has to do with ``docstrings``. For example in <Pr
 <RenderProgrammingLanguageBased target_name={"Rust"}>
 ```rust title="my_file.rs" lineNumbers
 /// This is what docstrings are in Rust, right now we are documenting a function
-fn abc(a: &str, b: i32, c: Vec<u8>) -> bool {
+fn abc(a: &str, b: i32, c: &[u8]) -> bool {
     // ...
 }
 ```
@@ -72,7 +72,7 @@ for documentation. Each section is rated out of 5 based on the importance and ho
     that doesn't do much, may benefit from omitting some of the clauses, do not overuse headers where unnecessary.
 
     Dictating if something is trivial requires experience, its best to view API docs examples from ChronoGrapher and
-    see where and which headers are omitted, while also discussing it with the mantainer (McBrincie212).
+    see where and which headers are omitted, while also discussing it with the maintainer (McBrincie212).
 </Callout>
 
 The structure of API documentation will be discussed later, the list of the special API docs headers can be found below:
@@ -84,7 +84,7 @@ This has to do with ChronoGrapher-specific components and systems. These include
 
 **TaskFrame Sections**
 - ``# Events`` Describes the events which the ``TaskFrame`` fires, when they are fired and what payload they have. **(REQUIRED)**
-- ``# Decorating / Wrapping Behaivior`` Documents how ``TaskFrames`` behave when wrapping inner ``TaskFrame(s)``. **(REQUIRED)**
+- ``# Decorating / Wrapping Behavior`` Documents how ``TaskFrames`` behave when wrapping inner ``TaskFrame(s)``. **(REQUIRED)**
 - ``# Execution Error(s)`` Document what kind of errors may appear whilst the TaskFrame is executing, under what conditions. **(REQUIRED)**
 - ``# Supported TaskHook(s)`` Describes what kind of TaskHooks are supported which change the behavior of the TaskFrame in some way, if any. **(RECOMMENDED)**
 
@@ -153,7 +153,7 @@ This has to do with ChronoGrapher-specific components and systems. These include
 **PersistenceBackend Sections**
 - ``# Storage Format`` Describes the data format used for persistence (JSON, binary, database... etc.). **(REQUIRED)**
 - ``# Recovery Semantics`` Explains how state is recovered after crashes/restarts. **(RECOMMENDED)**
-- ``# Checkpoint Behaivior`` Describes how checkpoints are stored during TaskFrame execution. **(RECOMMENDED)**
+- ``# Checkpoint Behavior`` Describes how checkpoints are stored during TaskFrame execution. **(RECOMMENDED)**
 
 <RenderProgrammingLanguageBased target_name={"Rust"}>
 ## Rust-Specific Headers
@@ -210,6 +210,10 @@ For errors, in the semantics header, one should describe how each variant behave
 - ``# Error(s)`` Lists the various errors which may appear, under what conditions each error appears in. **(REQUIRED)**
 - ``# Panics`` Lists the various reasons the method may panic, under what circumstances and why. **(REQUIRED)**
 - ``# Semantics`` Lists how the method is meant to be used and what it does. **(REQUIRED)**
+
+**Type Alias Sections**
+- ``# Semantics`` Elaborates the semantics of the type alias and its underlying type. **(REQUIRED)**
+- ``# Generic(s)`` Describes the generics which the type alias may have (don't include it if there aren't any). **(RECOMMENDED)**
 
 **Attribute-Macro Sections**
 Attribute macros (like ``#[task]`, ``#[workflow]``, ``#[chronographer::main]``) modify the behavior of the item they annotate.
@@ -395,3 +399,11 @@ count as "global" headers.
 
 For introducing any "global" header, it is best to discuss this with the maintainer of the project (McBrincie212) beforehand,
 to reach a conclusion, introducing new headers could mean updating this spec and previous other API docs.
+
+# When (Not) To Document an API
+It is best to avoid document entirely **Private Items** such as internal struct/enum/func helpers, since they are never
+use-facing, if you need to add clarification on something, best use comments.
+
+Another reason to avoid documenting in heavy detail something is when it is a simple **Setter/Getter**, **Simple Type Alias** or
+anything remotely close, for these cases. It is best to keep the description concise and short while explaining anything
+that may be needed.
