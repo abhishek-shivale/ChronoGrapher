@@ -56,48 +56,32 @@ use std::time::Duration;
 /// ```
 /// use std::num::NonZeroU32;
 /// use std::time::Duration;
-/// use async_trait::async_trait;
-/// use chronographer::task::{TaskFrameBuilder, TaskFrame, TaskFrameContext};
+/// use chronographer::task::TaskFrameBuilder;
 ///
-/// struct MyFrame;
-///
-/// #[async_trait]
-/// impl TaskFrame for MyFrame {
-///     type Error = String;
-///     async fn execute(&self, _ctx: &TaskFrameContext) -> Result<(), Self::Error> {
-///         println!("Executing primary task logic!");
-///         Ok(())
-///     }
-/// }
-///
-/// struct BackupFrame;
-///
-/// #[async_trait]
-/// impl TaskFrame for BackupFrame {
-///     type Error = String;
-///     async fn execute(&self, _ctx: &TaskFrameContext) -> Result<(), Self::Error> {
-///         println!("Executing backup logic!");
-///         Ok(())
-///     }
-/// }
+/// // `MyFrame` and `BackupFrame` are two types that implement `TaskFrame`.
 ///
 /// const DELAY_PER_RETRY: Duration = Duration::from_secs(1);
 ///
 /// let composed = TaskFrameBuilder::new(MyFrame)
 ///     .with_retry(NonZeroU32::new(3).unwrap(), DELAY_PER_RETRY) // Failure? Retry 3 times with 1s delay
 ///     .with_timeout(Duration::from_secs(30)) // Exceeded 30 seconds, terminate and error out with timeout?
-///     .with_fallback(BackupFrame) // Received a timeout or another error? Run "backup_frame"
+///     .with_fallback(BackupFrame) // Received a timeout or another error? Run "BackupFrame"
 ///     .build();
-///
-/// // With the workflow created, `composed` is now the type:
-/// // > ``FallbackTaskFrame<TimeoutTaskFrame<RetriableTaskFrame<MyFrame>>, BackupFrame>``
-///
-/// // all from this builder, without the complexity of manually creating this type
 /// ```
+/// With the workflow created, `composed` is now the type:
+/// > ``FallbackTaskFrame<TimeoutTaskFrame<RetriableTaskFrame<MyFrame>>, BackupFrame>``
+///
+/// all from this builder, without the complexity of manually creating this type
+///
 ///
 /// # See Also
-/// - [`TaskFrame`] - The core trait that defines execution logic.
-/// - [`Task`](crate::task::Task) - The top-level struct combining a frame with a trigger.
+/// - [`TaskFrame`] — The core trait that defines execution logic.
+/// - [`RetriableTaskFrame`] — The retry wrapper frame.
+/// - [`TimeoutTaskFrame`] — The timeout wrapper frame.
+/// - [`FallbackTaskFrame`] — The fallback wrapper frame.
+/// - [`ConditionalFrame`] — The conditional execution wrapper frame.
+/// - [`DependencyTaskFrame`] — The dependency-gated wrapper frame.
+/// - [`Task`](crate::task::Task) — The top-level struct combining a frame with a trigger.
 
 pub struct TaskFrameBuilder<T: TaskFrame>(T);
 
